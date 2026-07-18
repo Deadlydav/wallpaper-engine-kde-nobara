@@ -8,8 +8,8 @@ Getting this plugin working on Fedora/Nobara requires compiling from source sinc
 
 ## Prebuilt for
 
-- **Nobara 43** (Fedora 43 based)
-- **KDE Plasma 6.5** / **Qt 6.10**
+- **Nobara 43** (Fedora 43 based) and **Nobara 44** (Fedora 44 based, confirmed working)
+- **KDE Plasma 6.5–6.7** / **Qt 6.10–6.11**
 - **GCC 15** (patched for `<cassert>` compatibility)
 
 > If you're on a different Fedora/Nobara version or a different Qt/Plasma version, use the [build from source](#build-from-source) method instead.
@@ -61,7 +61,8 @@ This script handles everything: dependencies, downloading sources (with retry/fa
    - **This prevents Plasma crashes!**
 
 2. **Restart Plasma:**
-   - Log out and back in, or run: `plasmashell --replace &`
+   - Log out and back in, or run: `systemctl --user restart plasma-plasmashell.service`
+   - (Avoid `plasmashell --replace &` — it orphans the session from systemd, leaving the shell unsupervised and unable to auto-recover if it crashes.)
 
 3. **Configure your wallpaper:**
    - Right-click desktop -> **Configure Desktop and Wallpaper**
@@ -90,6 +91,7 @@ sed -i '/wallpaperEngineKde/d' ~/.config/plasma-org.kde.plasma.desktop-appletsrc
 - Ensure Wallpaper Engine is installed on Steam **on Linux** (not just Windows)
 - Check that the plugin library is installed: `ls /usr/lib64/qt6/qml/com/github/catsout/wallpaperEngineKde/`
 - Try a **video** type wallpaper first (simpler, most compatible)
+- Check `journalctl --user -u plasma-plasmashell.service` (or just `journalctl`) for `Cannot load library ... libmpv.so.2: cannot open shared object file` — the `mpv` package alone doesn't provide this; you also need `mpv-libs` (see below)
 
 ### "module com.github.catsout.wallpaperEngineKde is not installed"
 The plugin library is missing. Run `./install.sh` again or [build from source](#build-from-source).
@@ -99,9 +101,11 @@ The plugin library is missing. Run `./install.sh` again or [build from source](#
 pip install --user websockets
 ```
 
-### "qtwebsocket (qml module) not found"
+### "qtwebsocket (qml module) not found" / "Cannot load library ... libmpv.so.2"
+`install.sh` installs both of these already, but if you hit this after an OS upgrade or a partial install:
 ```bash
-sudo dnf install qt6-qtwebsockets-devel
+sudo dnf install -y mpv-libs qt6-qtwebsockets-devel
+systemctl --user restart plasma-plasmashell.service
 ```
 
 ## Credits & Upstream Sources
