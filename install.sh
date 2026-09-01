@@ -21,7 +21,7 @@ fi
 
 # ── Step 1: Install runtime dependencies ──
 print_step "Step 1: Installing runtime dependencies"
-sudo dnf install -y mpv qt6-qtwebengine qt6-qtwebsockets qt6-qtdeclarative lz4-libs vulkan-loader
+sudo dnf install -y mpv mpv-libs qt6-qtwebengine qt6-qtwebsockets-devel qt6-qtdeclarative lz4-libs vulkan-loader
 
 # Python websockets (needed by plugin helper)
 pip install --user websockets 2>/dev/null || pip3 install --user websockets 2>/dev/null || true
@@ -54,7 +54,7 @@ echo ""
 echo "  3. Subscribe to wallpapers on Steam Workshop"
 echo ""
 echo "  4. Restart Plasma:"
-echo "     Log out and back in, or run: plasmashell --replace &"
+echo "     Log out and back in, or run: systemctl --user restart plasma-plasmashell.service"
 echo ""
 echo "  5. Right-click desktop -> Configure Desktop"
 echo "     Change wallpaper type from 'Image' to 'Wallpaper Engine'"
